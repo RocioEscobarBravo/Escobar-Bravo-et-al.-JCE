@@ -1,0 +1,1273 @@
+---
+title: "Escobar Bravo et al. Data analysis. Volatiles from low R:FR-treated maize plants increase the emission of herbivore-induced plant volatiles in their neighbors"
+output: html_document
+date: "2025-03-15"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(here)
+library(readxl)
+library(openxlsx)
+
+library(multcompView)
+library(nlme)
+library(lme4)
+library(car)
+library(devtools)
+library(ggplot2)
+library(ggpubr)
+library(tidyr)
+library(tidyverse)
+library(officer)
+library(rvg)
+library(gridExtra)
+library(scales)
+library(Rmisc)
+library(plyr)
+library(viridis)
+library(ggsci)
+library(ggthemes)
+library(grid)
+library(rlang)
+library(multcomp)
+library(emmeans)
+library(agricolae)
+library(olsrr)
+
+here <- here::here
+data_folder <- "data"
+image_folder <- "images"
+output_folder <- "output"
+
+```
+
+
+
+
+#1. Fig 1. Data analysis and Graphs
+```{r}
+data_folder <-"data"
+file_name <- "Data.xls"
+file_path <- here(data_folder, file_name)
+Fig1_data <- read_excel (file_path, sheet = "Fig_1")
+
+
+# Information about the variables
+## Iteration refers to the volatile sampling point. 
+
+# Data analysis Fig. 2
+
+Fig1_data$Iteration<-as.factor(Fig1_data$Iteration)
+Fig1_data$Plant<-as.factor(Fig1_data$Plant)
+
+# Indole
+
+
+## Non-transformed data
+
+Indole_m1 <- lme(Indole~Iteration*Emitter*Receiver, 
+                 random = ~1|Plant, 
+                 data = Fig1_data)
+Indole_m2 <- update (Indole_m1, 
+                     correlation = corARMA(q=2))
+anova (Indole_m1, Indole_m2)
+Indole_m3 <- update (Indole_m2, 
+                     correlation = corAR1())
+anova (Indole_m2, Indole_m3)
+plot (Indole_m3)
+
+
+## sqrt transformed data
+
+Indole_sqrt <-sqrt(Fig1_data$Indole)
+Indole_mt1 <-lme(Indole_sqrt~Iteration*Emitter*Receiver, 
+                random = ~1|Plant, 
+                data = Fig1_data)
+Indole_mt2 <-update (Indole_mt1, 
+                     correlation = corARMA(q=2))
+anova (Indole_mt1, Indole_mt2)
+Indole_mt3 <-update(Indole_mt2, 
+                    correlation = corAR1())
+anova (Indole_mt2, Indole_mt3)
+plot (Indole_mt3)
+anova_indole_Fig1<-Anova (Indole_mt3)
+
+# Monoterpenes
+
+## Non-transformed data
+
+Monoterpenes_m1 <- lme (Monoterpenes~Iteration*Emitter*Receiver, 
+                      random = ~1|Plant, 
+                      data = Fig1_data)
+Monoterpenes_m2 <- update(Monoterpenes_m1, 
+                          correlation = corARMA(q=2))
+anova (Monoterpenes_m1, Monoterpenes_m2)
+Monoterpenes_m3 <-update(Monoterpenes_m2, 
+                         correlation = corAR1())
+anova (Monoterpenes_m2, Monoterpenes_m3)
+plot (Monoterpenes_m3)
+
+## log transformed data
+
+Monoterpenes_log <-log10(Fig1_data$Monoterpenes)
+Monoterpenes_mt1 <-lme(Monoterpenes_log ~Iteration*Emitter*Receiver, 
+                       random = ~1|Plant, 
+                       data = Fig1_data)
+Monoterpenes_mt2 <-update(Monoterpenes_mt1, correlation=corARMA(q=2))
+anova (Monoterpenes_mt1, Monoterpenes_mt2)
+Monoterpenes_mt3 <- update(Monoterpenes_mt2, 
+                           correlation=corAR1())
+anova (Monoterpenes_mt2, Monoterpenes_mt3)
+plot (Monoterpenes_mt3)
+anova_monoterpenes_Fig1 <-Anova (Monoterpenes_mt3)
+
+# Sesquiterpenes
+
+## Non-transformed data
+
+Sesquiterpenes_m1 <- lme(Sesquiterpenes~Iteration*Emitter*Receiver, 
+                         random = ~1|Plant, 
+                         data = Fig1_data)
+Sesquiterpenes_m2 <- update(Sesquiterpenes_m1, 
+                            correlation = corARMA(q=2))
+anova (Sesquiterpenes_m1, Sesquiterpenes_m2)
+Sesquiterpenes_m3 <- update (Sesquiterpenes_m2, 
+                             correlation = corAR1())
+anova (Sesquiterpenes_m2, Sesquiterpenes_m3)
+plot (Sesquiterpenes_m3)
+
+## log transformed data 
+
+Sesquiterpenes_sqrt <- log10 (Fig1_data$Sesquiterpenes)
+Sesquiterpenes_mt1 <- lme (Sesquiterpenes_sqrt~Iteration*Emitter*Receiver, 
+                           random = ~1|Plant, 
+                           data = Fig1_data)
+Sesquiterpenes_mt2 <-update (Sesquiterpenes_mt1, 
+                             correlation=corARMA(q=2))
+anova (Sesquiterpenes_mt1, Sesquiterpenes_mt2)
+Sesquiterpenes_mt3 <- update (Sesquiterpenes_mt2, 
+                              correlation = corAR1())
+anova(Sesquiterpenes_mt2, Sesquiterpenes_mt3)
+plot(Sesquiterpenes_mt3)
+anova_sesquiterpenes_Fig1 <-Anova(Sesquiterpenes_mt3)
+
+
+# DMNT
+## Non-transformed data
+
+dmnt_m1 <-lme (DMNT~Iteration*Emitter*Receiver, 
+               random = ~1|Plant, 
+               data = Fig1_data)
+
+dmnt_m2 <- update (dmnt_m1, 
+                   correlation = corARMA(q=2))
+anova(dmnt_m1, dmnt_m2)
+dmnt_m3 <-update(dmnt_m2, 
+                correlation = corAR1())
+anova (dmnt_m2, dmnt_m3)
+plot (dmnt_m3)
+
+## sqrt transformed data
+
+dmnt_sqrt <- sqrt (Fig1_data$DMNT)
+dmnt_mt1 <-lme(dmnt_sqrt~Iteration*Emitter*Receiver, 
+               random = ~1|Plant, 
+               data = Fig1_data)
+
+dmnt_mt2 <- update (dmnt_mt1, correlation = corARMA (q=2))
+anova (dmnt_mt1, dmnt_mt2)
+
+dmnt_mt3 <- update(dmnt_mt2, 
+                   correlation = corAR1())
+anova (dmnt_mt2, dmnt_mt3)
+plot(dmnt_mt3)
+anova_DMNT_Fig1 <- Anova(dmnt_mt3)
+
+
+#TMTT
+
+## sqrt transformed data
+
+tmtt_sqrt <- sqrt (Fig1_data$TMTT)
+tmtt_mt1 <-lme(tmtt_sqrt~Iteration*Emitter*Receiver, 
+               random = ~1|Plant, 
+               data = Fig1_data)
+tmtt_mt2 <- update (tmtt_mt1, 
+                    correlation = corARMA(q=2))
+anova (tmtt_mt1, tmtt_mt2)
+tmtt_mt3 <- update(tmtt_mt2, 
+                   correlation = corAR1())
+anova (tmtt_mt2, tmtt_mt3)
+plot (tmtt_mt3)
+anova_TMTT_Fig1 <-Anova (tmtt_mt3)
+
+
+#  Store the summary of each ANOVA in a list
+
+anova_results_Fig1 <- list (
+  indole = anova_indole_Fig1,
+  monoterpenes = anova_monoterpenes_Fig1,
+  sesquiterpenes = anova_sesquiterpenes_Fig1,
+  DMNT = anova_DMNT_Fig1,
+  TMTT = anova_TMTT_Fig1)
+
+
+# data frame with anova results
+
+anova_table_Fig1<- data.frame(
+  Variable = rep (names (anova_results_Fig1), each = length(anova_results_Fig1[[1]]$`Pr(>Chisq)`)),
+  Factor = unlist (lapply (anova_results_Fig1, function (x) rownames(x))),
+  Chisq = unlist (lapply (anova_results_Fig1, function (x) x$`Chisq`)),
+  Df = unlist (lapply (anova_results_Fig1, function (x) x$Df)),
+  P_Value = unlist (lapply (anova_results_Fig1, function (x) x$`Pr(>Chisq)`))
+)
+# View the structure of the new table
+
+str(anova_table_Fig1)
+
+# Export to excel
+
+write.xlsx(anova_table_Fig1, file = "anova_results_cleaned_Fig1.xlsx")
+
+
+# Graphs Fig. 1
+
+setwd("D:/Labtop Lenovo March 2022/1. Papers 2021-2022/Data for manuscripts/2. Crowding experiments/Manuscript 2/R_project_JCE")
+
+list.files("R") 
+
+source(here("R", "plot_functions.R"))
+
+Fig1_data$Iteration<-as.numeric(as.character(Fig1_data$Iteration))
+Fig1_data$Plant<-as.factor(Fig1_data$Plant)
+
+
+Fig1_indole <- plot_volatiles_Fig1_2 (Fig1_data, measurevar = "Indole")
+
+Fig1_monoterpenes <- plot_volatiles_Fig1_2 (Fig1_data, "Monoterpenes")
+
+Fig1_sesquiterpenes <- plot_volatiles_Fig1_2 (Fig1_data, "Sesquiterpenes")
+
+Fig1_DMNT <- plot_volatiles_Fig1_2 (Fig1_data, "DMNT")
+
+Fig1_TMTT <- plot_volatiles_Fig1_2 (Fig1_data, "TMTT")
+
+
+# Arrange the plots in a 2-column layout
+plots_Fig1 <- ggarrange(Fig1_indole, Fig1_monoterpenes, Fig1_sesquiterpenes, 
+                         Fig1_DMNT, Fig1_TMTT,
+                         ncol = 2, nrow = 3, 
+                         common.legend = TRUE, 
+                         align = "v")  # Ensures vertical alignment
+
+# Add a common y-axis label
+Fig1 <- annotate_figure(plots_Fig1, 
+                left = text_grob("Signal Intensity (AU)/g FW)", size = 14, rot = 90))
+
+
+
+```
+
+# 2. Fig 2. Data analysis and graphs
+```{r}
+
+data_folder <-"data"
+file_name <- "Data.xls"
+file_path <- here(data_folder, file_name)
+Fig2_data <- read_excel (file_path, sheet = "Fig_2")
+
+
+Fig2_data$Iteration<-as.factor(Fig2_data$Iteration)
+Fig2_data$Plant<-as.factor(Fig2_data$Plant)
+
+# Data analysis Fig. 1
+
+## Indole
+
+### Non-transformed data
+Indole_m1 <-lme ( Indole ~ Iteration * Emitter * Receiver, 
+                  random = ~1|Plant, 
+                  data = Fig2_data)
+
+Indole_m2 <- update (Indole_m1, correlation = corARMA (q = 2 ))
+anova (Indole_m1, Indole_m2)
+Indole_m3 <- update(Indole_m2, correlation = corAR1 ())
+anova (Indole_m2, Indole_m3)
+plot (Indole_m3)
+anova_indole_Fig2 <- Anova (Indole_m3)
+
+## Monoterpenes
+
+### Non-transformed data
+
+Monoterpenes_m1 <-lme (Monoterpenes ~ Iteration*Emitter*Receiver, 
+                       random = ~1|Plant, data = Fig2_data)
+
+Monoterpenes_m2 <- update (Monoterpenes_m1, 
+                           correlation = corARMA (q = 2))
+anova (Monoterpenes_m1, Monoterpenes_m2)
+Monoterpenes_m3 <- update (Monoterpenes_m2, 
+                           correlation=corAR1())
+anova (Monoterpenes_m2, Monoterpenes_m3)
+plot (Monoterpenes_m3)
+anova_monoterpenes_Fig2 <- Anova (Monoterpenes_m3)
+
+## Sesquiterpenes
+
+### Non-transformed sesquiterpene data
+
+Sesquiterpenes_m1 <-lme (Sesquiterpenes ~ Iteration*Emitter*Receiver, 
+                         random = ~1|Plant, data = Fig2_data)
+Sesquiterpenes_m2 <- update (Sesquiterpenes_m1, 
+                             correlation = corARMA (q = 2))
+anova (Sesquiterpenes_m1, Sesquiterpenes_m2)
+Sesquiterpenes_m3 <- update (Sesquiterpenes_m2, 
+                             correlation = corAR1 ())
+anova(Sesquiterpenes_m2, Sesquiterpenes_m3)
+plot(Sesquiterpenes_m3)
+
+### sesquiterpene sqrt transformed data
+Sesquiterpenes_sqrt <- sqrt(Fig2_data$Sesquiterpenes)
+Sesquiterpenes_mt1 <-lme(Sesquiterpenes_sqrt ~ Iteration*Emitter*Receiver, 
+                         random = ~1|Plant, data = Fig2_data)
+Sesquiterpenes_mt2 <-update (Sesquiterpenes_mt1, 
+                             correlation=corARMA (q = 2))
+anova(Sesquiterpenes_mt1, Sesquiterpenes_mt2)
+Sesquiterpenes_mt3<- update (Sesquiterpenes_mt2, 
+                             correlation=corAR1())
+anova (Sesquiterpenes_mt2, Sesquiterpenes_mt3)
+plot (Sesquiterpenes_mt3)
+anova_sesquiterpenes_Fig2 <- Anova (Sesquiterpenes_mt3)
+
+
+## DMNT
+
+### DMNT Non-transformed data
+
+dmnt_m1 <- lme (DMNT ~ Iteration*Emitter*Receiver, 
+                random = ~1|Plant, data = Fig2_data)
+dmnt_m2 <- update (dmnt_m1, correlation=corARMA(q = 2))
+anova (dmnt_m1, dmnt_m2)
+dmnt_m3 <- update (dmnt_m2, 
+                   correlation = corAR1())
+anova (dmnt_m2, dmnt_m3)
+plot(dmnt_m3)
+
+### DMNT sqrt transformed data
+
+dmnt_sqrt <- sqrt(Fig2_data$DMNT)
+dmnt_mt1 <- lme (dmnt_sqrt ~Iteration*Emitter*Receiver, 
+                 random = ~1|Plant, data = Fig2_data)
+dmnt_mt2 <- update(dmnt_mt1, 
+                   correlation=corARMA(q=2))
+anova (dmnt_mt1, dmnt_mt2)
+dmnt_mt3 <- update (dmnt_mt2, 
+                    correlation = corAR1())
+anova (dmnt_mt2, dmnt_mt3)
+plot (dmnt_mt3)
+anova_DMNT_Fig2 <- Anova(dmnt_mt3)
+
+##TMTT
+
+### TMTT sqrt transformed data
+tmtt_sqrt <- sqrt(Fig2_data$TMTT)
+tmtt_mt1 <- lme(tmtt_sqrt ~ Iteration*Emitter*Receiver, 
+                random = ~1|Plant, data = Fig2_data)
+tmtt_mt2 <- update(tmtt_mt1, 
+                   correlation=corARMA(q=2))
+anova (tmtt_mt1, tmtt_mt2)
+tmtt_mt3 <-update (tmtt_mt2, 
+                   correlation=corAR1())
+anova (tmtt_mt2, tmtt_mt3)
+plot (tmtt_mt3)
+anova_TMTT_Fig2 <- Anova(tmtt_mt3)
+
+
+##  Store the summary of each ANOVA in a list
+
+anova_results_Fig2 <- list (
+  indole = anova_indole_Fig2,
+  monoterpenes = anova_monoterpenes_Fig2,
+  sesquiterpenes = anova_sesquiterpenes_Fig2,
+  DMNT = anova_DMNT_Fig2,
+  TMTT = anova_TMTT_Fig2)
+
+
+## data frame with anova results
+
+anova_table_Fig2 <- data.frame(
+  Variable = rep (names (anova_results_Fig2), each = length(anova_results_Fig2[[1]]$`Pr(>Chisq)`)),
+  Factor = unlist (lapply (anova_results_Fig2, function (x) rownames(x))),
+  Chisq = unlist (lapply (anova_results_Fig2, function (x) x$`Chisq`)),
+  Df = unlist (lapply (anova_results_Fig2, function (x) x$Df)),
+  P_Value = unlist (lapply (anova_results_Fig2, function (x) x$`Pr(>Chisq)`))
+)
+# View the structure of the new table
+
+str(anova_table_Fig2)
+
+## Export to excel
+
+write.xlsx(anova_table_Fig2, file = "anova_results_cleaned_Fig2.xlsx")
+
+
+# Graphs
+
+
+source(here("R", "plot_functions.R"))
+
+Fig2_data$Iteration<-as.numeric(as.character(Fig2_data$Iteration))
+Fig2_data$Plant<-as.factor(Fig2_data$Plant)
+
+View(Fig2_data)
+
+Fig2_indole <- plot_volatiles_Fig1_2 (Fig2_data, "Indole")
+
+Fig2_monoterpenes <- plot_volatiles_Fig1_2 (Fig2_data, "Monoterpenes" )
+
+
+Fig2_sesquiterpenes <- plot_volatiles_Fig1_2 (Fig2_data, "Sesquiterpenes")
+
+
+Fig2_DMNT <- plot_volatiles_Fig1_2 (Fig2_data, "DMNT")
+
+
+Fig2_TMTT <- plot_volatiles_Fig1_2 (Fig2_data, "TMTT")
+
+
+plots_Fig2 <-ggarrange(Fig2_indole, Fig2_DMNT, Fig2_monoterpenes, 
+                      Fig2_TMTT, Fig2_sesquiterpenes, ncol = 2, nrow = 3, 
+                      common.legend = TRUE, align = "v")
+
+
+Fig2 <- annotate_figure(plots_Fig2, 
+                left = text_grob("Signal Intensity (AU)/g FW)", size = 14, rot = 90))
+
+```
+
+
+#3. Fig.3a. Data analysis and graphs
+```{r}
+
+data_folder <-"data"
+file_name <- "Data.xls"
+file_path <- here(data_folder, file_name)
+Fig3a_data <- read_excel (file_path, sheet = "Fig_3a")
+
+
+Fig3a_data$Iteration<-as.factor(Fig3a_data$Iteration)
+Fig3a_data$Plant<-as.factor(Fig3a_data$Plant)
+Fig3a_data$Experiment<-as.factor(Fig3a_data$Experiment)
+
+# Data analysis
+
+##Indole
+
+### Non-transformed data
+
+Indole_t <- sqrt (Fig3a_data$Indole)
+model_Indole_1 <-lme (Indole_t~Iteration*Light_Emitter*Vol_Emitter*Experiment, 
+                      random = ~1|Plant, 
+                      data = Fig3a_data)
+model_Indole_2<-update(model_Indole_1, 
+                       correlation=corARMA(q=2))
+anova(model_Indole_1, model_Indole_2)
+model_Indole_3<-update(model_Indole_2, 
+                       correlation=corAR1())
+anova(model_Indole_2, model_Indole_3)
+anova_indole_Fig3a <- Anova(model_Indole_3)
+plot(model_Indole_3)
+
+## Monoterpenes
+
+## Transformed data
+
+Monoterpenes_t <-log10(Fig3a_data$Monoterpenes)
+model_monoterpenes_1<-lme(Monoterpenes_t~Iteration*Light_Emitter*Vol_Emitter*Experiment, 
+                          random = ~1|Plant, 
+                          data = Fig3a_data)
+model_monoterpenes_2<-update(model_monoterpenes_1, 
+                             correlation=corARMA(q=2))
+anova(model_monoterpenes_1, model_monoterpenes_2)
+model_monoterpenes_3<-update(model_monoterpenes_2, 
+                             correlation=corAR1())
+anova(model_monoterpenes_2, model_monoterpenes_3)
+anova_monoterpenes_Fig3a<-Anova(model_monoterpenes_3)
+plot(model_monoterpenes_3)
+
+
+## Sesquiterpenes
+
+## Transformed data
+
+Sesquiterpenes_t<-log10(Fig3a_data$Sesquiterpenes)
+model_Sesquiterpenes_1<-lme(Sesquiterpenes_t~Iteration*Light_Emitter*Vol_Emitter*Experiment, random = ~1|Plant, data = Fig3a_data)
+model_Sesquiterpenes_2<-update(model_Sesquiterpenes_1, 
+                               correlation=corARMA(q=2))
+anova(model_Sesquiterpenes_1, model_Sesquiterpenes_2)
+model_Sesquiterpenes_3<-update(model_Sesquiterpenes_2, 
+                               correlation=corAR1())
+anova(model_Sesquiterpenes_2, model_Sesquiterpenes_3)
+anova_sesquiterpenes_Fig3a <- Anova(model_Sesquiterpenes_3)
+plot(model_Sesquiterpenes_3)
+
+
+
+## DMNT
+
+### Transformed data
+
+DMNT_t <-sqrt(Fig3a_data$DMNT)
+model_DMNT_1 <-lme(DMNT_t~Iteration*Light_Emitter*Vol_Emitter*Experiment, 
+                   random = ~1|Plant, 
+                   data = Fig3a_data)
+model_DMNT_2 <-update(model_DMNT_1, 
+                     correlation = corARMA(q=2))
+anova(model_DMNT_1, model_DMNT_2)
+model_DMNT_3 <-update (model_DMNT_2, 
+                     correlation=corAR1())
+anova(model_DMNT_2, model_DMNT_3)
+anova_DMNT_Fig3a <-Anova(model_DMNT_2)
+plot(model_DMNT_2)
+
+## TMTT
+
+### Transformed data
+
+TMTT_t<-log10(Fig3a_data$TMTT)
+model_TMTT_1<-lme(TMTT_t~Iteration*Light_Emitter*Vol_Emitter*Experiment, 
+                  random = ~1|Plant, 
+                  data = Fig3a_data)
+model_TMTT_2<-update(model_TMTT_1, 
+                     correlation=corARMA(q=2))
+anova(model_TMTT_1, model_TMTT_2)
+model_TMTT_3<-update(model_TMTT_2, 
+                     correlation=corAR1())
+anova(model_TMTT_2, model_TMTT_3)
+anova_TMTT_Fig3a <-Anova(model_TMTT_3)
+plot(model_TMTT_3)
+
+##  Store the summary of each ANOVA in a list
+
+anova_results_Fig3a <- list (
+  indole = anova_indole_Fig3a,
+  monoterpenes = anova_monoterpenes_Fig3a,
+  sesquiterpenes = anova_sesquiterpenes_Fig3a,
+  DMNT = anova_DMNT_Fig3a,
+  TMTT = anova_TMTT_Fig3a)
+
+
+## data frame with anova results
+
+anova_table_Fig3a<- data.frame(
+  Variable = rep (names (anova_results_Fig3a), each = length(anova_results_Fig3a[[1]]$`Pr(>Chisq)`)),
+  Factor = unlist (lapply (anova_results_Fig3a, function (x) rownames(x))),
+  Chisq = unlist (lapply (anova_results_Fig3a, function (x) x$`Chisq`)),
+  Df = unlist (lapply (anova_results_Fig3a, function (x) x$Df)),
+  P_Value = unlist (lapply (anova_results_Fig3a, function (x) x$`Pr(>Chisq)`))
+)
+# View the structure of the new table
+
+str(anova_table_Fig3a)
+
+## Export to excel
+
+write.xlsx(anova_table_Fig3a, file = "anova_results_cleaned_Fig3a.xlsx")
+
+
+# Graphs
+
+setwd("D:/Labtop Lenovo March 2022/1. Papers 2021-2022/Data for manuscripts/2. Crowding experiments/Manuscript 2/R_project_JCE")
+
+list.files("R") 
+
+source(here("R", "plot_functions.R"))
+
+Fig3a_data$Iteration<-as.numeric(as.character(Fig3a_data$Iteration))
+
+
+
+Fig3a_indole <- plot_volatiles_Fig3a (Fig3a_data, "Indole")
+
+Fig3a_monoterpenes <- plot_volatiles_Fig3a (Fig3a_data, "Monoterpenes")
+
+Fig3a_sesquiterpenes <- plot_volatiles_Fig3a (Fig3a_data, "Sesquiterpenes")
+
+Fig3a_DMNT <- plot_volatiles_Fig3a (Fig3a_data, "DMNT")
+
+Fig3a_TMTT <- plot_volatiles_Fig3a (Fig3a_data, "TMTT")
+
+
+plots_Fig3a <-ggarrange(Fig3a_indole, Fig3a_monoterpenes, 
+                        Fig3a_sesquiterpenes, Fig3a_DMNT, Fig3a_TMTT, 
+                        ncol = 2, nrow = 3, common.legend = TRUE, align = "v")
+
+Fig3a <- annotate_figure(plots_Fig3a, 
+                left = text_grob("Signal Intensity (AU)/g FW)", size = 14, rot = 90))
+
+
+```
+
+#4. Fig. 3b. Data analysis and graphs
+```{r}
+
+
+data_folder <-"data"
+file_name <- "Data.xls"
+file_path <- here(data_folder, file_name)
+Fig3b_data <- read_excel (file_path, sheet = "Fig_3b")
+
+View(Fig3b_data)
+
+Fig3b_data$Iteration <-as.factor (Fig3b_data$Iteration)
+Fig3b_data$NoPlant <- as.factor (Fig3b_data$Plant)
+Fig3b_data$NoPlant <-as.factor(Fig3b_data$Experiment)
+
+#Data analysis
+
+## Indole
+
+### Transformed data
+
+Indole_t <-sqrt (Fig3b_data$Indole)
+model_Indole_1 <-lme(Indole_t~Iteration*Light_Emitter*Vol_Emitter*Experiment, 
+                    random = ~1|Plant, 
+                    data = Fig3b_data)
+model_Indole_2 <-update(model_Indole_1, 
+                       correlation=corARMA(q=2))
+anova(model_Indole_1, model_Indole_2)
+model_Indole_3 <-update(model_Indole_2, 
+                       correlation=corAR1())
+anova(model_Indole_2, model_Indole_3)
+anova_indole_Fig3b <- Anova(model_Indole_3)
+plot(model_Indole_3)
+
+
+
+## Monoterpenes
+### Transformed data
+Monoterpenes_t <- log10 (Fig3b_data$Monoterpenes)
+model_monoterpenes_1 <- lme(Monoterpenes_t ~ Iteration*Light_Emitter*Vol_Emitter*Experiment, 
+                          random = ~1|Plant, 
+                          data = Fig3b_data)
+model_monoterpenes_2 <- update(model_monoterpenes_1, 
+                             correlation = corARMA (q=2))
+anova(model_monoterpenes_1, model_monoterpenes_2)
+model_monoterpenes_3 <- update(model_monoterpenes_2, 
+                             correlation = corAR1 ())
+anova(model_monoterpenes_2, model_monoterpenes_3)
+anova_monoterpenes_Fig3b <-Anova(model_monoterpenes_3)
+plot(model_monoterpenes_3)
+
+## Sesquiterpenes
+### Transformed data
+Sesquiterpenes_t<-log10(Fig3b_data$Sesquiterpenes)
+model_Sesquiterpenes_1<-lme(Sesquiterpenes_t~Iteration*Light_Emitter*Vol_Emitter*Experiment, 
+                            random = ~1|Plant, 
+                            data = Fig3b_data)
+model_Sesquiterpenes_2<-update(model_Sesquiterpenes_1, 
+                               correlation = corARMA(q=2))
+anova(model_Sesquiterpenes_1, model_Sesquiterpenes_2)
+model_Sesquiterpenes_3<-update(model_Sesquiterpenes_2, 
+                               correlation = corAR1())
+anova(model_Sesquiterpenes_2, model_Sesquiterpenes_3)
+anova_sesquiterpenes_Fig3b <- Anova (model_Sesquiterpenes_3)
+plot(model_Sesquiterpenes_3)
+
+
+
+## DMNT
+### Transformed data on DMNT data without one data point that was missing - 
+
+
+new_dataDMNT<-Fig3b_data[-c(164),]
+
+DMNT_t <- sqrt(new_dataDMNT$DMNT)
+
+model_DMNT_1<-lme(DMNT_t~Iteration*Light_Emitter*Vol_Emitter*Experiment, 
+                  random = ~1|Plant, 
+                  data = new_dataDMNT)
+model_DMNT_2<-update(model_DMNT_1, 
+                     correlation = corARMA (q=2))
+anova(model_DMNT_1, model_DMNT_2)
+model_DMNT_3<-update(model_DMNT_2, 
+                     correlation = corAR1 ())
+anova(model_DMNT_2, model_DMNT_3)
+anova_DMNT_Fig3b <- Anova(model_DMNT_2)
+plot(model_DMNT_2)
+
+
+## TMTT
+### Transformed data
+
+TMTT_t <-sqrt(Fig3b_data$TMTT)
+model_TMTT_1 <-lme(TMTT_t~Iteration*Light_Emitter*Vol_Emitter*Experiment, 
+                  random = ~1|Plant, 
+                  data = Fig3b_data)
+model_TMTT_2 <-update (model_TMTT_1, 
+                     correlation = corARMA (q=2))
+anova(model_TMTT_1, model_TMTT_2)
+model_TMTT_3 <-update(model_TMTT_2, 
+                     correlation = corAR1())
+anova(model_TMTT_2, model_TMTT_3)
+anova_TMTT_Fig3b <- Anova(model_TMTT_3)
+plot(model_TMTT_3)
+
+
+
+##  Store the summary of each ANOVA in a list
+
+anova_results_Fig3b <- list (
+  indole = anova_indole_Fig3b,
+  monoterpenes = anova_monoterpenes_Fig3b,
+  sesquiterpenes = anova_sesquiterpenes_Fig3b,
+  DMNT = anova_DMNT_Fig3b,
+  TMTT = anova_TMTT_Fig3b)
+
+
+## data frame with anova results
+
+anova_table_Fig3b<- data.frame(
+  Variable = rep (names (anova_results_Fig3b), each = length(anova_results_Fig3b[[1]]$`Pr(>Chisq)`)),
+  Factor = unlist (lapply (anova_results_Fig3b, function (x) rownames(x))),
+  Chisq = unlist (lapply (anova_results_Fig3b, function (x) x$`Chisq`)),
+  Df = unlist (lapply (anova_results_Fig3b, function (x) x$Df)),
+  P_Value = unlist (lapply (anova_results_Fig3b, function (x) x$`Pr(>Chisq)`))
+)
+## View the structure of the new table
+
+str(anova_table_Fig3b)
+
+## Export to excel
+
+write.xlsx(anova_table_Fig3b, file = "anova_results_cleaned_Fig3b.xlsx")
+
+# Graphs Fig 3b
+
+setwd("D:/Labtop Lenovo March 2022/1. Papers 2021-2022/Data for manuscripts/2. Crowding experiments/Manuscript 2/R_project_JCE")
+
+list.files("R") 
+
+source(here("R", "plot_functions.R"))
+
+Fig3b_data$Iteration<-as.numeric(as.character(Fig3b_data$Iteration))
+
+
+
+Fig3b_indole <- plot_volatiles_Fig3b (Fig3b_data, "Indole")
+
+Fig3b_monoterpenes <- plot_volatiles_Fig3b (Fig3b_data, "Monoterpenes")
+
+Fig3b_sesquiterpenes <- plot_volatiles_Fig3b (Fig3b_data, "Sesquiterpenes")
+
+Fig3b_DMNT <- plot_volatiles_Fig3b (Fig3b_data, "DMNT")
+
+Fig3b_TMTT <- plot_volatiles_Fig3b (Fig3b_data, "TMTT")
+
+
+plots_Fig3b<-ggarrange(Fig3b_indole, Fig3b_monoterpenes, 
+                       Fig3b_sesquiterpenes, Fig3b_DMNT, Fig3b_TMTT, 
+                       ncol = 2, nrow = 3, common.legend = TRUE, align = "v")
+
+
+Fig3b <- annotate_figure(plots_Fig3b, 
+                left = text_grob("Signal Intensity (AU)/g FW)", size = 14, rot = 90))
+
+```
+
+#5. Fig 4. Data analysis and graphs
+
+```{r}
+
+data_folder <-"data"
+file_name <- "Data.xls"
+file_path <- here(data_folder, file_name)
+Fig4_data <- read_excel (file_path, sheet = "Fig_4")
+View(Fig4_data)
+
+# Statistical analysis
+
+
+
+## mixed-effects model, where the replication of the experiment was included as random factor
+
+
+model_Fig4 <- lmer(SUM_Volatiles ~ LightEmitter * Herbivory_Emitter * Receiver + (1 | Replication), 
+                     data = Fig4_data)
+Anova(model_Fig4)
+plot(model_Fig4)
+
+
+## Calculation of estimated marginal means (EMMs) for each main factor followed by Tukey's Honest Significant Difference (HSD) test for pairwise comparisons 
+
+mod_Fig4_means_contr <- emmeans::emmeans(object = model_Fig4,
+                                    pairwise ~ LightEmitter*Herbivory_Emitter*Receiver,
+                                    adjust = "tukey")
+
+mod_means_Fig4 <- cld(object = mod_Fig4_means_contr$emmeans,
+                           Letters = letters)
+
+## Figure 4
+
+plot_Fig.4 <-ggbarplot(Fig4_data, x = "Receiver", y = "SUM_Volatiles", 
+                      add = c("mean_se"), fill = "Emitter_Treatments", 
+                      position = position_dodge(0.8)) + 
+                      theme(axis.title = element_text(colour = "black", size=10), 
+                            axis.text = element_text(colour = "black", size = 8),
+                            legend.title=element_blank(),
+                            axis.title.x = element_blank(),
+                            legend.key.size = unit(1, "cm"), 
+                            legend.key.width = unit(1,"cm")) +
+                      scale_fill_manual (values = c("#5ab4ac","#01665e","#d8b365", "#8c510a"),
+                       labels = c("HighControl" = "cVOCs from High R:FR",
+                                  "HighHerb" = "HIPVs from High R:FR",
+                                  "LowControl" = "cVOCs from Low R:FR",
+                                  "LowHerb" = "HIPVs from Low R:FR")) +
+                      geom_jitter(mapping = aes(x=Receiver, y=SUM_Volatiles, fill= Emitter_Treatments), 
+                                  position = position_jitterdodge(0.0), size=2, alpha=0.2)  +   
+                                  ylab("Signal Intensity (AU)/ g FW")
+
+
+```
+
+#6. Fig.5 Data analysis
+
+```{r}
+
+
+data_folder <-"data"
+file_name <- "Data.xls"
+file_path <- here(data_folder, file_name)
+Fig5_data <- read_excel (file_path, sheet = "Fig_5")
+
+
+Fig5_data$Iteration<-as.factor(Fig5_data$Iteration)
+Fig5_data$Plant<-as.factor(Fig5_data$Plant)
+
+
+# Analysis on transformed data and all iterations included
+
+Hexenal_t<-log10(Fig5_data$Hexenal)
+model_hexenal_1 <-lme(Hexenal_t~Light*Herbivory*Iteration, 
+                     random = ~1|Plant, data = Fig5_data)
+model_hexenal_2 <-update(model_hexenal_1, correlation=corARMA (q=2))
+anova (model_hexenal_1, model_hexenal_2)
+model_hexenal_3<-update (model_hexenal_2, 
+                        correlation = corAR1())
+anova (model_hexenal_2, model_hexenal_3)
+Anova (model_hexenal_3)
+plot (model_hexenal_3)
+
+
+
+hexenol_t <-log10(Fig5_data$hexenol)
+model_hexenol_1<-lme(hexenol_t~Light*Herbivory*Iteration, 
+                     random = ~1|Plant, data = Fig5_data)
+model_hexenol_2<-update(model_hexenol_1, 
+                        correlation=corARMA(q=2))
+anova (model_hexenol_1, model_hexenol_2)
+model_hexenol_3 <-update(model_hexenol_2, 
+                        correlation=corAR1())
+anova(model_hexenol_2, model_hexenol_3)
+Anova(model_hexenol_3)
+plot(model_hexenol_3)
+
+
+hac_t <-sqrt(Fig5_data$hac)
+model_hac_1 <-lme(hac_t~Light*Herbivory*Iteration, 
+                  random = ~1|Plant, data = Fig5_data)
+model_hac_2<-update(model_hac_1, 
+                    correlation = corARMA(q=2))
+anova(model_hac_1, model_hac_2)
+model_hac_3<-update(model_hac_2, 
+                    correlation=corAR1())
+anova(model_hac_2, model_hac_3)
+Anova(model_hac_3)
+plot(model_hac_3)
+
+# Analysis on transformed data and iteration 1 excluded from the analysis to explore variations in volatile dynamics after the first burst of GLV emission
+
+Fig5_data_It1_excluded <- Fig5_data %>%
+  filter(Iteration != "it_1")
+
+Fig5_data_It1_excluded$Iteration<-as.factor(Fig5_data_It1_excluded$Iteration)
+Fig5_data_It1_excluded$Plant<-as.factor(Fig5_data_It1_excluded$Plant)
+
+
+View(Fig5_data_It1_excluded)
+
+## Hexenal
+
+Hexenal_t <-log10(Fig5_data_It1_excluded$Hexenal)
+model_hexenal_1<-lme(Hexenal_t~Light*Herbivory*Iteration, 
+                     random = ~1|Plant, data = Fig5_data_It1_excluded)
+model_hexenal_2<-update(model_hexenal_1, 
+                        correlation=corARMA(q=2))
+anova(model_hexenal_1, model_hexenal_2)
+model_hexenal_3 <-update(model_hexenal_2, 
+                         correlation=corAR1())
+anova(model_hexenal_2, 
+      model_hexenal_3)
+Anova(model_hexenal_3)
+plot(model_hexenal_3)
+
+## Hexenol
+
+hexenol_t <-log10 (Fig5_data_It1_excluded$hexenol)
+model_hexenol_1<-lme(hexenol_t~Light*Herbivory*Iteration, 
+                     random = ~1|Plant, data = Fig5_data_It1_excluded)
+model_hexenol_2 <-update(model_hexenol_1, 
+                        correlation=corARMA(q=2))
+anova(model_hexenol_1, model_hexenol_2)
+model_hexenol_3 <-update(model_hexenol_2, 
+                        correlation=corAR1())
+anova(model_hexenol_2, model_hexenol_3)
+Anova(model_hexenol_3)
+plot(model_hexenol_3)
+
+## HAC
+
+
+hac_t<-sqrt(Fig5_data_It1_excluded$hac)
+model_hac_1<-lme(hac_t~Light*Herbivory*Iteration, random = ~1|Plant, 
+                 data = Fig5_data_It1_excluded)
+model_hac_2<-update(model_hac_1, 
+                    correlation=corARMA(q=2))
+anova(model_hac_1, model_hac_2)
+model_hac_3<-update(model_hac_2, 
+                    correlation=corAR1())
+anova(model_hac_2, model_hac_3)
+Anova(model_hac_3)
+plot(model_hac_3)
+
+
+
+# Graphs for Fig.5 were generated using excel
+
+```
+
+# 7. Fig.S5 - Cummulative emission of volatiles in Fig.1 
+
+```{r}
+
+data_folder <-"data"
+file_name <- "Data.xls"
+file_path <- here(data_folder, file_name)
+Fig1_data <- read_excel (file_path, sheet = "Fig_1")
+
+
+# Cumulative emission of volatile compounds from Fig.1 
+
+
+
+FigS5_data <- Fig1_data %>%
+  mutate(Plant = as.factor(Plant))
+
+# Sum of individual volatiles per treatment and plant
+
+summarized_data_FigS5 <- FigS5_data %>%
+  group_by(Treatment, Plant, Emitter, Receiver) %>%
+    dplyr::summarise(across(c(Indole, Monoterpenes, Sesquiterpenes, DMNT, TMTT), sum, na.rm = TRUE)) %>% mutate(Treatment = factor(Treatment, 
+                            levels = c("B", "A", "D", "C"),  # Custom order
+                            labels = c("High R:FR + cVOCs", "High R:FR + HIPVs", "Low R:FR + cVOCs", "Low R:FR + HIPVs")))
+
+View(summarized_data_FigS5)
+
+## Statistics
+
+### Monoterpenes
+
+model_monot_FigS5 <- lm(Monoterpenes~Emitter*Receiver, 
+                                data= summarized_data_FigS5)
+anova(model_monot_FigS5)
+
+mod_monot_FigS5_means_contr <- emmeans::emmeans(object = model_monot_FigS5,
+                                    pairwise ~ Emitter*Receiver,
+                                    adjust = "tukey")
+
+means_monot_FigS5 <- cld(object = mod_monot_FigS5_means_contr$emmeans,
+                           Letters = letters)
+
+
+### Sesquiterpenes
+model_sesq_FigS5 <- lm (Sesquiterpenes~Emitter*Receiver, 
+                                  data = summarized_data_FigS5)
+
+anova(model_sesq_FigS5)
+
+mod_sesq_FigS5_means_contr <- emmeans::emmeans(object = model_sesq_FigS5,
+                                    pairwise ~ Emitter*Receiver,
+                                    adjust = "tukey")
+
+means_sesq_FigS5 <- cld(object = mod_sesq_FigS5_means_contr$emmeans,
+                           Letters = letters)
+
+
+### Indole
+model_Indole_FigS5 <- lm (Indole ~ Emitter*Receiver, 
+                          data = summarized_data_FigS5)
+
+anova(model_Indole_FigS5)
+
+mod_ind_FigS5_means_contr <- emmeans::emmeans(object = model_Indole_FigS5,
+                                    pairwise ~ Emitter*Receiver,
+                                    adjust = "tukey")
+
+means_ind_FigS5 <- cld(object = mod_ind_FigS5_means_contr$emmeans,
+                           Letters = letters)
+
+### DMNT
+
+model_DMNT_FigS5 <- lm (DMNT ~ Emitter*Receiver, 
+                        data = summarized_data_FigS5)
+anova(model_DMNT_FigS5)
+
+mod_DMNT_FigS5_means_contr <- emmeans::emmeans(object = model_DMNT_FigS5,
+                                    pairwise ~ Emitter*Receiver,
+                                    adjust = "tukey")
+
+means_DMNT_FigS5 <- cld(object = mod_DMNT_FigS5_means_contr$emmeans,
+                           Letters = letters)
+
+
+
+### TMTT
+
+model_TMTT_FigS5 <- aov(TMTT ~ Emitter*Receiver, data = summarized_data_FigS5)
+
+anova(model_TMTT_FigS5)
+
+mod_TMTT_FigS5_means_contr <- emmeans::emmeans(object = model_TMTT_FigS5,
+                                    pairwise ~ Emitter*Receiver,
+                                    adjust = "tukey")
+
+means_TMTT_FigS5 <- cld(object = mod_TMTT_FigS5_means_contr$emmeans,
+                           Letters = letters)
+
+# Bar plots Fig. S5
+
+source(here("R", "plot_functions.R"))
+
+## Define treatment colors
+
+custom_colors <- c("#5ab4ac", "#01665e", "#d8b365", "#8c510a")  
+
+## Monoterpenes
+
+plot_monoterpenes_FigS5 <- plot_Fig_S5_6 (data = summarized_data_FigS5, 
+  measurevar = "Monoterpenes",  
+  y_label = "Signal Intensity (AU)/g FW",  
+  colors = custom_colors, variable_name = "Monoterpenes")
+
+## Sesquiterpenes
+
+plot_sesquiterpenes_FigS5 <- plot_Fig_S5_6 (data = summarized_data_FigS5, 
+  measurevar = "Sesquiterpenes",  
+  y_label = "Signal Intensity (AU)/g FW",  
+  colors = custom_colors, variable_name = "Sesquiterpenes")
+
+## Sesquiterpenes
+
+plot_indole_FigS5 <- plot_Fig_S5_6 (data = summarized_data_FigS5, 
+  measurevar = "Indole",  
+  y_label = "Signal Intensity (AU)/g FW",  
+  colors = custom_colors, variable_name = "Indole")
+
+## DMNT
+
+plot_DMNT_FigS5 <-plot_Fig_S5_6 (data = summarized_data_FigS5, 
+  measurevar = "DMNT",  
+  y_label = "Signal Intensity (AU)/g FW",  
+  colors = custom_colors, variable_name = "DMNT")
+
+## TMTT
+
+plot_TMTT_FigS5 <- plot_Fig_S5_6 (data = summarized_data_FigS5, 
+  measurevar = "TMTT", 
+  y_label = "Signal Intensity (AU)/g FW", 
+  colors = custom_colors, variable_name = "TMTT")
+
+## All plots
+
+plots_FigS5 <- ggarrange (plot_indole_FigS5, 
+                         plot_monoterpenes_FigS5, 
+                         plot_sesquiterpenes_FigS5, 
+                         plot_DMNT_FigS5, 
+                         plot_TMTT_FigS5,  
+                         ncol = 2, nrow = 3, 
+                         common.legend = TRUE, align = "v")
+
+# Add a common y-axis label
+
+FigS5 <- annotate_figure(plots_FigS5, 
+                left = text_grob("Signal Intensity (AU)/g FW)", size = 14, rot = 90))
+
+read_pptx() %>% 
+  add_slide(layout = "Title and Content", master = "Office Theme") %>% 
+   ph_with(dml(ggobj = FigS5), location = ph_location(type = "body", width = 7, height = 8)) %>% 
+      print(target = "C:/Users/rocio/Desktop/Plots R2.pptx")
+
+
+
+```
+
+#8. Fig. S6 - Cummulative emission of volatiles in Fig.2 
+```{r}
+
+data_folder <-"data"
+file_name <- "Data.xls"
+file_path <- here(data_folder, file_name)
+Fig2_data <- read_excel (file_path, sheet = "Fig_2")
+
+
+# Cumulative emission of volatile compounds from Fig.2 
+
+FigS6_data <- Fig2_data %>%
+  mutate(Plant = as.factor(Plant))
+
+# Sum of individual volatiles per treatment and plant
+
+summarized_data_FigS6 <- FigS6_data %>%
+  group_by(Treatment, Plant, Emitter, Receiver) %>%
+    dplyr::summarise(across(c(Indole, Monoterpenes, Sesquiterpenes, DMNT, TMTT), sum, na.rm = TRUE)) %>% mutate(Treatment = factor(Treatment, 
+                            levels = c("B", "A", "D", "C"),  # Custom order
+                            labels = c("High R:FR + cVOCs", "High R:FR + HIPVs", "Low R:FR + cVOCs", "Low R:FR + HIPVs")))
+
+View(summarized_data_FigS6)
+
+## Statistics
+
+### Monoterpenes
+
+model_monot_FigS6 <- lm(Monoterpenes~Emitter*Receiver, 
+                                data= summarized_data_FigS6)
+anova(model_monot_FigS6)
+
+mod_monot_FigS6_means_contr <- emmeans::emmeans(object = model_monot_FigS6,
+                                    pairwise ~ Emitter*Receiver,
+                                    adjust = "tukey")
+
+means_monot_FigS6 <- cld(object = mod_monot_FigS6_means_contr$emmeans,
+                           Letters = letters)
+
+
+### Sesquiterpenes
+model_sesq_FigS6 <- lm (Sesquiterpenes~Emitter*Receiver, 
+                                  data = summarized_data_FigS6)
+
+anova(model_sesq_FigS6)
+
+mod_sesq_FigS6_means_contr <- emmeans::emmeans(object = model_sesq_FigS6,
+                                    pairwise ~ Emitter*Receiver,
+                                    adjust = "tukey")
+
+means_sesq_FigS6 <- cld(object = mod_sesq_FigS6_means_contr$emmeans,
+                           Letters = letters)
+
+
+### Indole
+model_Indole_FigS6 <- lm (Indole ~ Emitter*Receiver, 
+                          data = summarized_data_FigS6)
+
+anova(model_Indole_FigS6)
+
+mod_ind_FigS6_means_contr <- emmeans::emmeans(object = model_Indole_FigS6,
+                                    pairwise ~ Emitter*Receiver,
+                                    adjust = "tukey")
+
+means_ind_FigS6 <- cld(object = mod_ind_FigS6_means_contr$emmeans,
+                           Letters = letters)
+
+### DMNT
+
+model_DMNT_FigS6 <- lm (DMNT ~ Emitter*Receiver, 
+                        data = summarized_data_FigS6)
+anova(model_DMNT_FigS6)
+
+mod_DMNT_FigS6_means_contr <- emmeans::emmeans(object = model_DMNT_FigS6,
+                                    pairwise ~ Emitter*Receiver,
+                                    adjust = "tukey")
+
+means_DMNT_FigS6 <- cld(object = mod_DMNT_FigS6_means_contr$emmeans,
+                           Letters = letters)
+
+
+
+### TMTT
+
+model_TMTT_FigS6 <- aov(TMTT ~ Emitter*Receiver, data = summarized_data_FigS6)
+
+anova(model_TMTT_FigS6)
+
+mod_TMTT_FigS6_means_contr <- emmeans::emmeans(object = model_TMTT_FigS6,
+                                    pairwise ~ Emitter*Receiver,
+                                    adjust = "tukey")
+
+means_TMTT_FigS6 <- cld(object = mod_TMTT_FigS6_means_contr$emmeans,
+                           Letters = letters)
+
+
+# Bar plots Fig. S6
+
+source(here("R", "plot_functions.R"))
+
+## Define treatment colors
+
+custom_colors <- c("#5ab4ac", "#01665e", "#d8b365", "#8c510a")  
+
+## Monoterpenes
+
+plot_monoterpenes_FigS6 <- plot_Fig_S5_6 (data = summarized_data_FigS6, 
+  measurevar = "Monoterpenes",  
+  y_label = "Signal Intensity (AU)/g FW",  
+  colors = custom_colors, variable_name = "Monoterpenes")
+
+## Sesquiterpenes
+
+plot_sesquiterpenes_FigS6 <- plot_Fig_S5_6 (data = summarized_data_FigS6, 
+  measurevar = "Sesquiterpenes",  
+  y_label = "Signal Intensity (AU)/g FW",  
+  colors = custom_colors, variable_name = "Sesquiterpenes")
+
+## Sesquiterpenes
+
+plot_indole_FigS6 <- plot_Fig_S5_6 (data = summarized_data_FigS6, 
+  measurevar = "Indole",  
+  y_label = "Signal Intensity (AU)/g FW",  
+  colors = custom_colors, variable_name = "Indole")
+
+## DMNT
+
+plot_DMNT_FigS6 <-plot_Fig_S5_6 (data = summarized_data_FigS6, 
+  measurevar = "DMNT",  
+  y_label = "Signal Intensity (AU)/g FW",  
+  colors = custom_colors, variable_name = "DMNT")
+
+## TMTT
+
+plot_TMTT_FigS6 <- plot_Fig_S5_6 (data = summarized_data_FigS6, 
+  measurevar = "TMTT", 
+  y_label = "Signal Intensity (AU)/g FW", 
+  colors = custom_colors, variable_name = "TMTT")
+
+## All plots
+
+plots_FigS6 <- ggarrange(plot_indole_FigS6, plot_monoterpenes_FigS6, 
+                   plot_sesquiterpenes_FigS6, plot_DMNT_FigS6, 
+                   plot_TMTT_FigS6,  ncol = 2, nrow = 3, 
+                   common.legend = TRUE, align = "v")
+
+
+# Add a common y-axis label
+
+FigS6 <- annotate_figure(plots_FigS6, 
+                left = text_grob("Signal Intensity (AU)/g FW)", size = 14, rot = 90))
+
+read_pptx() %>% 
+  add_slide(layout = "Title and Content", master = "Office Theme") %>% 
+   ph_with(dml(ggobj = FigS6), location = ph_location(type = "body", width = 7, height = 8)) %>% 
+      print(target = "C:/Users/rocio/Desktop/Plots R2.pptx")
+```
+
