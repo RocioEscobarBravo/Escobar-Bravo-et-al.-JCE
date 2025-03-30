@@ -46,7 +46,7 @@ output_folder <- "output"
 
 
 
-#1. Fig 1. Data analysis and Graphs
+# Fig 1. Data analysis and Graphs
 ```{r}
 
 #Iteration refers to the volatile sampling point. 
@@ -241,7 +241,8 @@ Fig1 <- annotate_figure(plots_Fig1,
 
 ```
 
-# 2. Fig 2. Data analysis and graphs
+# Fig 2. Data analysis and graphs
+
 ```{r}
 Fig2_data$Iteration<-as.factor(Fig2_data$Iteration)
 Fig2_data$Plant<-as.factor(Fig2_data$Plant)
@@ -388,7 +389,8 @@ Fig2 <- annotate_figure(plots_Fig2,
 
 ```
 
-#3. Fig.3a. Data analysis and graphs
+# Fig.3a. Data analysis and graphs
+
 ```{r}
 Fig3a_data$Iteration<-as.factor(Fig3a_data$Iteration)
 Fig3a_data$Plant<-as.factor(Fig3a_data$Plant)
@@ -512,7 +514,7 @@ Fig3a <- annotate_figure(plots_Fig3a,
                 left = text_grob("Signal Intensity (AU)/g FW)", size = 14, rot = 90))
 ```
 
-#4. Fig. 3b. Data analysis and graphs
+# Fig. 3b. Data analysis and graphs
 
 ```{r}
 
@@ -646,11 +648,9 @@ Fig3b <- annotate_figure(plots_Fig3b,
 
 ```
 
-#5. Fig 4. Data analysis and graphs
+# Fig 4. Data analysis and graphs
 
 ```{r}
-
-
 # Statistical analysis
 
 ## mixed-effects model, where the replication of the experiment was included as random factor
@@ -690,7 +690,7 @@ plot_Fig.4 <-ggbarplot(Fig4_data, x = "Receiver", y = "SUM_Volatiles",
 
 ```
 
-#6. Fig.5 Data analysis
+# Fig.5 Data analysis
 
 ```{r}
 
@@ -795,7 +795,7 @@ plot(model_hac_3)
 
 ```
 
-# 7. Fig.S5 - Cummulative emission of volatiles in Fig.1 
+# Fig.S5 - Cummulative emission of volatiles in Fig.1 
 
 ```{r}
 
@@ -950,7 +950,8 @@ read_pptx() %>%
 
 ```
 
-#8. Fig. S6 - Cummulative emission of volatiles in Fig.2 
+# Fig. S6 - Cummulative emission of volatiles in Fig.2 
+
 ```{r}
 
 # Cumulative emission of volatile compounds from Fig.2 
