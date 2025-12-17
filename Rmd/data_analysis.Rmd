@@ -53,6 +53,7 @@ output_folder <- "output"
 # Data analysis Fig. 1
 Fig1_data$Iteration<-as.factor(Fig1_data$Iteration)
 Fig1_data$Plant<-as.factor(Fig1_data$Plant)
+options(contrasts = c("contr.sum", "contr.poly"))
 
 # Indole
 ## Non-transformed data
@@ -80,7 +81,7 @@ Indole_mt3 <-update(Indole_mt2,
                     correlation = corAR1())
 anova (Indole_mt2, Indole_mt3)
 plot (Indole_mt3)
-anova_indole_Fig1<-Anova (Indole_mt3)
+anova_indole_Fig1<-Anova (Indole_mt3, type = "III")
 
 # Monoterpenes
 ## Non-transformed data
@@ -106,7 +107,7 @@ Monoterpenes_mt3 <- update(Monoterpenes_mt2,
                            correlation=corAR1())
 anova (Monoterpenes_mt2, Monoterpenes_mt3)
 plot (Monoterpenes_mt3)
-anova_monoterpenes_Fig1 <-Anova (Monoterpenes_mt3)
+anova_monoterpenes_Fig1 <-Anova (Monoterpenes_mt3, type = "III")
 
 # Sesquiterpenes
 ## Non-transformed data
@@ -133,7 +134,7 @@ Sesquiterpenes_mt3 <- update (Sesquiterpenes_mt2,
                               correlation = corAR1())
 anova(Sesquiterpenes_mt2, Sesquiterpenes_mt3)
 plot(Sesquiterpenes_mt3)
-anova_sesquiterpenes_Fig1 <-Anova(Sesquiterpenes_mt3)
+anova_sesquiterpenes_Fig1 <-Anova(Sesquiterpenes_mt3, type = "III")
 
 
 # DMNT
@@ -163,7 +164,7 @@ dmnt_mt3 <- update(dmnt_mt2,
                    correlation = corAR1())
 anova (dmnt_mt2, dmnt_mt3)
 plot(dmnt_mt3)
-anova_DMNT_Fig1 <- Anova(dmnt_mt3)
+anova_DMNT_Fig1 <- Anova(dmnt_mt3, type = "III")
 
 
 #TMTT
@@ -180,7 +181,7 @@ tmtt_mt3 <- update(tmtt_mt2,
                    correlation = corAR1())
 anova (tmtt_mt2, tmtt_mt3)
 plot (tmtt_mt3)
-anova_TMTT_Fig1 <-Anova (tmtt_mt3)
+anova_TMTT_Fig1 <-Anova (tmtt_mt3, type = "III")
 
 
 #  Store the summary of each ANOVA in a list
@@ -204,9 +205,6 @@ anova_table_Fig1<- data.frame(
 
 str(anova_table_Fig1)
 
-# Export to excel
-
-write.xlsx(anova_table_Fig1, file = "anova_results_cleaned_Fig1.xlsx")
 
 
 # Graphs Fig. 1
@@ -246,6 +244,7 @@ Fig1 <- annotate_figure(plots_Fig1,
 ```{r}
 Fig2_data$Iteration<-as.factor(Fig2_data$Iteration)
 Fig2_data$Plant<-as.factor(Fig2_data$Plant)
+options(contrasts = c("contr.sum", "contr.poly"))
 
 # Data analysis Fig. 1
 
@@ -260,7 +259,7 @@ anova (Indole_m1, Indole_m2)
 Indole_m3 <- update(Indole_m2, correlation = corAR1 ())
 anova (Indole_m2, Indole_m3)
 plot (Indole_m3)
-anova_indole_Fig2 <- Anova (Indole_m3)
+anova_indole_Fig2 <- Anova (Indole_m3, type = "III")
 
 # Monoterpenes
 ## Non-transformed data
@@ -275,7 +274,7 @@ Monoterpenes_m3 <- update (Monoterpenes_m2,
                            correlation=corAR1())
 anova (Monoterpenes_m2, Monoterpenes_m3)
 plot (Monoterpenes_m3)
-anova_monoterpenes_Fig2 <- Anova (Monoterpenes_m3)
+anova_monoterpenes_Fig2 <- Anova (Monoterpenes_m3, type = "III")
 
 # Sesquiterpenes
 ## Non-transformed sesquiterpene data
@@ -300,7 +299,7 @@ Sesquiterpenes_mt3<- update (Sesquiterpenes_mt2,
                              correlation=corAR1())
 anova (Sesquiterpenes_mt2, Sesquiterpenes_mt3)
 plot (Sesquiterpenes_mt3)
-anova_sesquiterpenes_Fig2 <- Anova (Sesquiterpenes_mt3)
+anova_sesquiterpenes_Fig2 <- Anova (Sesquiterpenes_mt3, type = "III")
 
 
 # DMNT
@@ -326,7 +325,7 @@ dmnt_mt3 <- update (dmnt_mt2,
                     correlation = corAR1())
 anova (dmnt_mt2, dmnt_mt3)
 plot (dmnt_mt3)
-anova_DMNT_Fig2 <- Anova(dmnt_mt3)
+anova_DMNT_Fig2 <- Anova(dmnt_mt3, type = "III")
 
 #TMTT
 ## TMTT sqrt transformed data
@@ -340,7 +339,7 @@ tmtt_mt3 <-update (tmtt_mt2,
                    correlation=corAR1())
 anova (tmtt_mt2, tmtt_mt3)
 plot (tmtt_mt3)
-anova_TMTT_Fig2 <- Anova(tmtt_mt3)
+anova_TMTT_Fig2 <- Anova(tmtt_mt3, type = "III")
 
 
 #  Store the summary of each ANOVA in a list
@@ -395,6 +394,7 @@ Fig2 <- annotate_figure(plots_Fig2,
 Fig3a_data$Iteration<-as.factor(Fig3a_data$Iteration)
 Fig3a_data$Plant<-as.factor(Fig3a_data$Plant)
 Fig3a_data$Experiment<-as.factor(Fig3a_data$Experiment)
+options(contrasts = c("contr.sum", "contr.poly"))
 
 # Data analysis
 
@@ -410,7 +410,7 @@ anova(model_Indole_1, model_Indole_2)
 model_Indole_3<-update(model_Indole_2, 
                        correlation=corAR1())
 anova(model_Indole_2, model_Indole_3)
-anova_indole_Fig3a <- Anova(model_Indole_3)
+anova_indole_Fig3a <- Anova(model_Indole_3, type = "III)
 plot(model_Indole_3)
 
 # Monoterpenes
@@ -425,7 +425,7 @@ anova(model_monoterpenes_1, model_monoterpenes_2)
 model_monoterpenes_3<-update(model_monoterpenes_2, 
                              correlation=corAR1())
 anova(model_monoterpenes_2, model_monoterpenes_3)
-anova_monoterpenes_Fig3a<-Anova(model_monoterpenes_3)
+anova_monoterpenes_Fig3a<-Anova(model_monoterpenes_3, type = "III")
 plot(model_monoterpenes_3)
 
 # Sesquiterpenes
@@ -438,7 +438,7 @@ anova(model_Sesquiterpenes_1, model_Sesquiterpenes_2)
 model_Sesquiterpenes_3<-update(model_Sesquiterpenes_2, 
                                correlation=corAR1())
 anova(model_Sesquiterpenes_2, model_Sesquiterpenes_3)
-anova_sesquiterpenes_Fig3a <- Anova(model_Sesquiterpenes_3)
+anova_sesquiterpenes_Fig3a <- Anova(model_Sesquiterpenes_3, type = "III")
 plot(model_Sesquiterpenes_3)
 
 # DMNT
@@ -453,7 +453,7 @@ anova(model_DMNT_1, model_DMNT_2)
 model_DMNT_3 <-update (model_DMNT_2, 
                      correlation=corAR1())
 anova(model_DMNT_2, model_DMNT_3)
-anova_DMNT_Fig3a <-Anova(model_DMNT_2)
+anova_DMNT_Fig3a <-Anova(model_DMNT_2, type = "III")
 plot(model_DMNT_2)
 
 # TMTT
@@ -468,7 +468,7 @@ anova(model_TMTT_1, model_TMTT_2)
 model_TMTT_3<-update(model_TMTT_2, 
                      correlation=corAR1())
 anova(model_TMTT_2, model_TMTT_3)
-anova_TMTT_Fig3a <-Anova(model_TMTT_3)
+anova_TMTT_Fig3a <-Anova(model_TMTT_3, type = "III")
 plot(model_TMTT_3)
 
 #  Store the summary of each ANOVA in a list
@@ -521,7 +521,7 @@ Fig3a <- annotate_figure(plots_Fig3a,
 Fig3b_data$Iteration <-as.factor (Fig3b_data$Iteration)
 Fig3b_data$NoPlant <- as.factor (Fig3b_data$Plant)
 Fig3b_data$NoPlant <-as.factor(Fig3b_data$Experiment)
-
+options(contrasts = c("contr.sum", "contr.poly"))
 #Data analysis
 
 # Indole
@@ -537,7 +537,7 @@ anova(model_Indole_1, model_Indole_2)
 model_Indole_3 <-update(model_Indole_2, 
                        correlation=corAR1())
 anova(model_Indole_2, model_Indole_3)
-anova_indole_Fig3b <- Anova(model_Indole_3)
+anova_indole_Fig3b <- Anova(model_Indole_3, type = "III")
 plot(model_Indole_3)
 
 # Monoterpenes
@@ -552,7 +552,7 @@ anova(model_monoterpenes_1, model_monoterpenes_2)
 model_monoterpenes_3 <- update(model_monoterpenes_2, 
                              correlation = corAR1 ())
 anova(model_monoterpenes_2, model_monoterpenes_3)
-anova_monoterpenes_Fig3b <-Anova(model_monoterpenes_3)
+anova_monoterpenes_Fig3b <-Anova(model_monoterpenes_3, type = "III")
 plot(model_monoterpenes_3)
 
 # Sesquiterpenes
@@ -567,7 +567,7 @@ anova(model_Sesquiterpenes_1, model_Sesquiterpenes_2)
 model_Sesquiterpenes_3<-update(model_Sesquiterpenes_2, 
                                correlation = corAR1())
 anova(model_Sesquiterpenes_2, model_Sesquiterpenes_3)
-anova_sesquiterpenes_Fig3b <- Anova (model_Sesquiterpenes_3)
+anova_sesquiterpenes_Fig3b <- Anova (model_Sesquiterpenes_3, type = "III")
 plot(model_Sesquiterpenes_3)
 
 # DMNT
@@ -584,7 +584,7 @@ anova(model_DMNT_1, model_DMNT_2)
 model_DMNT_3<-update(model_DMNT_2, 
                      correlation = corAR1 ())
 anova(model_DMNT_2, model_DMNT_3)
-anova_DMNT_Fig3b <- Anova(model_DMNT_2)
+anova_DMNT_Fig3b <- Anova(model_DMNT_2, type = "III")
 plot(model_DMNT_2)
 
 # TMTT
@@ -599,7 +599,7 @@ anova(model_TMTT_1, model_TMTT_2)
 model_TMTT_3 <-update(model_TMTT_2, 
                      correlation = corAR1())
 anova(model_TMTT_2, model_TMTT_3)
-anova_TMTT_Fig3b <- Anova(model_TMTT_3)
+anova_TMTT_Fig3b <- Anova(model_TMTT_3, type = "III")
 plot(model_TMTT_3)
 
 #  Store the summary of each ANOVA in a list
@@ -653,10 +653,12 @@ Fig3b <- annotate_figure(plots_Fig3b,
 ```{r}
 # Statistical analysis
 
+options(contrasts = c("contr.sum", "contr.poly"))
+
 ## mixed-effects model, where the replication of the experiment was included as random factor
 model_Fig4 <- lmer(SUM_Volatiles ~ LightEmitter * Herbivory_Emitter * Receiver + (1 | Replication), 
                      data = Fig4_data)
-Anova(model_Fig4)
+Anova(model_Fig4, type = "III")
 plot(model_Fig4)
 
 ## Calculation of estimated marginal means (EMMs) for each main factor followed by Tukey's Honest Significant Difference (HSD) test for pairwise comparisons 
@@ -697,6 +699,8 @@ plot_Fig.4 <-ggbarplot(Fig4_data, x = "Receiver", y = "SUM_Volatiles",
 Fig5_data$Iteration<-as.factor(Fig5_data$Iteration)
 Fig5_data$Plant<-as.factor(Fig5_data$Plant)
 
+options(contrasts = c("contr.sum", "contr.poly"))
+
 # Analysis on transformed data and all iterations included
 
 Hexenal_t<-log10(Fig5_data$Hexenal)
@@ -707,7 +711,7 @@ anova (model_hexenal_1, model_hexenal_2)
 model_hexenal_3<-update (model_hexenal_2, 
                         correlation = corAR1())
 anova (model_hexenal_2, model_hexenal_3)
-Anova (model_hexenal_3)
+Anova (model_hexenal_3, type = "III)
 plot (model_hexenal_3)
 
 
@@ -720,7 +724,7 @@ anova (model_hexenol_1, model_hexenol_2)
 model_hexenol_3 <-update(model_hexenol_2, 
                         correlation=corAR1())
 anova(model_hexenol_2, model_hexenol_3)
-Anova(model_hexenol_3)
+Anova(model_hexenol_3, type = "III")
 plot(model_hexenol_3)
 
 
@@ -733,7 +737,7 @@ anova(model_hac_1, model_hac_2)
 model_hac_3<-update(model_hac_2, 
                     correlation=corAR1())
 anova(model_hac_2, model_hac_3)
-Anova(model_hac_3)
+Anova(model_hac_3, type = "III")
 plot(model_hac_3)
 
 # Analysis on transformed data and iteration 1 excluded from the analysis to explore variations in volatile dynamics after the first burst of GLV emission
@@ -759,7 +763,7 @@ model_hexenal_3 <-update(model_hexenal_2,
                          correlation=corAR1())
 anova(model_hexenal_2, 
       model_hexenal_3)
-Anova(model_hexenal_3)
+Anova(model_hexenal_3, type = "III")
 plot(model_hexenal_3)
 
 ## Hexenol
@@ -773,7 +777,7 @@ anova(model_hexenol_1, model_hexenol_2)
 model_hexenol_3 <-update(model_hexenol_2, 
                         correlation=corAR1())
 anova(model_hexenol_2, model_hexenol_3)
-Anova(model_hexenol_3)
+Anova(model_hexenol_3, type = "III")
 plot(model_hexenol_3)
 
 ## HAC
@@ -788,7 +792,7 @@ anova(model_hac_1, model_hac_2)
 model_hac_3<-update(model_hac_2, 
                     correlation=corAR1())
 anova(model_hac_2, model_hac_3)
-Anova(model_hac_3)
+Anova(model_hac_3, type = "III")
 plot(model_hac_3)
 
 # Graphs for Fig.5 were generated using excel
@@ -1098,4 +1102,5 @@ FigS6 <- annotate_figure(plots_FigS6,
                 left = text_grob("Signal Intensity (AU)/g FW)", size = 14, rot = 90))
 
 ```
+
 
